@@ -1,0 +1,97 @@
+import { paymentModel } from "../model/payments.model.js";
+import { DB_NAME } from "../util/constant.js";
+
+export const create = (data) => {
+  return paymentModel.create(data);
+};
+
+export const updatePayment = (filter, data) => {
+  return paymentModel.findOneAndUpdate(filter, data, { new: true });
+};
+
+export const findPayment = (filter, option) => {
+  return paymentModel.findOne(filter, option);
+};
+
+export const paymentList = () => {
+  return paymentModel.aggregate([
+    {
+      $lookup: {
+        from: DB_NAME.USER,
+        localField: "userId",
+        foreignField: "_id",
+        as: "userDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: DB_NAME.ORDER,
+        localField: "orderId",
+        foreignField: "_id",
+        as: "orderDetails",
+      },
+    },
+    { $unwind: "$orderDetails" },
+    {
+      $lookup: {
+        from: DB_NAME.PRODUCT,
+        localField: "orderDetails.products.productId",
+        foreignField: "_id",
+        as: "productDetails",
+      },
+    },
+    {
+      $addFields: {
+        userName: { $arrayElemAt: ["$userDetails.name", 0] },
+        "orderDetails.products": {
+          $map: {
+            input: "$orderDetails.products",
+            as: "prod",
+            in: {
+              $mergeObjects: [
+                "$$prod",
+                {
+                  name: {
+                    $arrayElemAt: [
+                      "$productDetails.name",
+                      {
+                        $indexOfArray: [
+                          "$productDetails._id",
+                          "$$prod.productId",
+                        ],
+                      },
+                    ],
+                  },
+                },
+                {
+                  price: {
+                    $arrayElemAt: [
+                      "$productDetails.price",
+                      {
+                        $indexOfArray: [
+                          "$productDetails._id",
+                          "$$prod.productId",
+                        ],
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        amount: 1,
+        paymentStatus: 1,
+        orderId: 1,
+        userName: 1,
+        userId: 1,
+        "orderDetails.products": 1,
+      },
+    },
+  ]);
+};

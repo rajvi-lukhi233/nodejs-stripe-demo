@@ -1,0 +1,41 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>Products</title>
+    <style>
+      .product-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 products per row */
+        gap: 20px;
+        padding: 20px;
+      }
+
+      .product-card {
+        border: 1px solid black;
+        padding: 15px;
+        text-align: center;
+      }
+
+      .product-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Product List</h2>
+
+    <button id="addBtn" onclick="goAddProduct()">Add Product</button>
+
+    <div id="productList" class="product-container"></div>
+
+    <script src="script.js"></script>
+
+    <script>
+      loadProducts();
+    </script>
+  </body>
+</html>

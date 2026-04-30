@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://js.stripe.com/terminal/v1/"></script>
+  </head>
+  <body>
+    <h2>Payment</h2>
+    <button onclick="showCard()">Online Card Payment</button>
+    <button onclick="showSwipe()">Swipe Card</button>
+
+    <div id="cardSection" style="display: none">
+      <div id="card-element"></div>
+      <button onclick="pay()">Pay</button>
+    </div>
+
+    <div id="swipeSection" style="display: none">
+      <input id="cardNumber" placeholder="Card Number" />
+      <input id="expMonth" placeholder="MM" />
+      <input id="expYear" placeholder="YY" />
+      <input id="cvc" placeholder="CVC" />
+
+      <button onclick="mockSwipePay()">Swipe & Pay</button>
+
+      <p id="swipeStatus"></p>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
